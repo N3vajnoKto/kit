@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# 1. Проверяем, доступны ли нужные утилиты
+if ! command -v clang-format >/dev/null 2>&1; then
+    echo "❌ Error: clang-format is not installed."
+    exit 1
+fi
+
+# Ищем clang-format-diff (в зависимости от ОС имя может быть clang-format-diff или clang-format-diff.py)
+if command -v clang-format-diff >/dev/null 2>&1; then
+    DIFF_TOOL="clang-format-diff"
+elif command -v clang-format-diff.py >/dev/null 2>&1; then
+    DIFF_TOOL="clang-format-diff.py"
+else
+    echo "❌ Error: clang-format-diff wrapper not found. Please install llvm/clang tools."
+    exit 1
+fi
+
+# 2. Получаем diff для C/C++ файлов, добавленных в индекс
+# Фильтруем только строки, которые идут на коммит, и форматируем только их
+git diff --cached --unified=0 | $DIFF_TOOL -p1 -i
+
+# 3. Передобавляем файлы в индекс, если clang-format внес правки
+# Находим имена измененных файлов и делаем git add
+git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(c|cc|cpp|cxx|h|hh|hpp|hxx)$' | while read -r file; do
+    if [ -f "$file" ]; then
+        git add "$file"
+    fi
+done
+
+echo "✅ Smart clang-format (only modified lines) applied successfully!"
