@@ -6,7 +6,6 @@ if ! command -v clang-format >/dev/null 2>&1; then
     exit 1
 fi
 
-# Ищем clang-format-diff (в зависимости от ОС имя может быть clang-format-diff или clang-format-diff.py)
 if command -v clang-format-diff >/dev/null 2>&1; then
     DIFF_TOOL="clang-format-diff"
 elif command -v clang-format-diff.py >/dev/null 2>&1; then
@@ -16,16 +15,22 @@ else
     exit 1
 fi
 
-# 2. Получаем diff для C/C++ файлов, добавленных в индекс
-# Фильтруем только строки, которые идут на коммит, и форматируем только их
-git diff --cached --unified=0 | $DIFF_TOOL -p1 -i
+# 2. Получаем список изменений и проверяем их через clang-format-diff без флага -i
+# Флаг -v заставит утилиту вывести diff, если код не соответствует правилам
+STAGED_DIFF=$(git diff --cached --unified=0 | $DIFF_TOOL -p1)
 
-# 3. Передобавляем файлы в индекс, если clang-format внес правки
-# Находим имена измененных файлов и делаем git add
-git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(c|cc|cpp|cxx|h|hh|hpp|hxx)$' | while read -r file; do
-    if [ -f "$file" ]; then
-        git add "$file"
-    fi
-done
+# 3. Если вывод не пустой, значит есть нарушения форматирования
+if [ -n "$STAGED_DIFF" ]; then
+    echo "❌ Git commit aborted: Code formatting violations found!"
+    echo "========================================================="
+    echo "$STAGED_DIFF"
+    echo "========================================================="
+    echo "💡 To fix this, run clang-format on your modified files or lines,"
+    echo "   or use: git diff --cached --unified=0 | clang-format-diff -p1 -i"
+    
+    # Запрещаем коммит
+    exit 1
+fi
 
-echo "✅ Smart clang-format (only modified lines) applied successfully!"
+echo "✅ Code formatting check passed successfully!"
+exit 0
