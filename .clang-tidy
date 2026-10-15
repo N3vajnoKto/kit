@@ -40,7 +40,8 @@ Checks: '
   readability-*,
   -readability-else-after-return,
   -readability-identifier-length,
-  -readability-redundant-access-specifiers
+  -readability-redundant-access-specifiers,
+  -readability-convert-member-functions-to-static
 '
 WarningsAsErrors: '*'
 FormatStyle: file
