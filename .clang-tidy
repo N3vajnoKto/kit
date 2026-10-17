@@ -41,7 +41,8 @@ Checks: '
   -readability-else-after-return,
   -readability-identifier-length,
   -readability-redundant-access-specifiers,
-  -readability-convert-member-functions-to-static
+  -readability-convert-member-functions-to-static,
+  -cppcoreguidelines-avoid-non-const-global-variables
 '
 WarningsAsErrors: '*'
 FormatStyle: file
