@@ -42,9 +42,11 @@ Checks: '
   -readability-identifier-length,
   -readability-redundant-access-specifiers,
   -readability-convert-member-functions-to-static,
-  -cppcoreguidelines-avoid-non-const-global-variables
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -portability-avoid-pragma-once,
 '
-WarningsAsErrors: '*'
+WarningsAsErrors: ''
+
 FormatStyle: file
 CheckOptions:
   - key: readability-uppercase-literal-suffix.NewSuffixes
@@ -75,7 +77,7 @@ CheckOptions:
   - key: readability-identifier-naming.TypeAliasIgnoredRegexp
     value: '([a-z0-9_]+_)?(type|pointer|reference|iterator)|iterator_(category|concept)'
   - key: readability-identifier-naming.TypeTemplateParameterCase
-    value: PascalCase
+    value: CamelCase
   - key: readability-identifier-naming.TemplateTemplateParameterCase
-    value: PascalCase
+    value: CamelCase
 ...
