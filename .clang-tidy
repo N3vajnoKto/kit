@@ -44,6 +44,8 @@ Checks: '
   -readability-convert-member-functions-to-static,
   -cppcoreguidelines-avoid-non-const-global-variables,
   -portability-avoid-pragma-once,
+  -bugprone-easily-swappable-parameters,
+  -cppcoreguidelines-avoid-reference-coroutine-parameters
 '
 WarningsAsErrors: ''
 
